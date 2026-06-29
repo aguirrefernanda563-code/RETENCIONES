@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Actividad: Retenciones Tributarias — Ecuador 2026</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --azul: #185FA5; --azul-light: #E6F1FB; --azul-dark: #0C447C;
+    --verde: #0F6E56; --verde-light: #E1F5EE; --verde-border: #5DCAA5;
+    --ambar: #BA7517; --ambar-light: #FAEEDA;
+    --rojo: #A32D2D; --rojo-light: #FCEBEB; --rojo-border: #F09595;
+    --gris-bg: #F5F5F3; --gris-card: #FFFFFF; --gris-border: #E0DDD6;
+    --gris-border-strong: #C5C2BA; --gris-text: #3D3D3A; --gris-muted: #7A7974;
+    --radius: 8px; --shadow: 0 1px 3px rgba(0,0,0,.08);
+  }
+
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: var(--gris-bg); color: var(--gris-text); font-size: 15px; line-height: 1.6; }
+
+  .top-bar { background: var(--azul-dark); color: #fff; padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between; }
+  .top-bar h1 { font-size: 16px; font-weight: 500; }
+  .top-bar span { font-size: 13px; opacity: .75; }
+
+  .wrapper { max-width: 860px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  /* PROGRESS */
+  .progress-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+  .progress-step { flex: 1; height: 5px; background: var(--gris-border); border-radius: 3px; transition: background .3s; }
+  .progress-step.done { background: var(--verde); }
+  .progress-step.active { background: var(--azul); }
+  .progress-label { font-size: 13px; color: var(--gris-muted); white-space: nowrap; }
+
+  /* SECTIONS */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* CARDS */
+  .card { background: var(--gris-card); border: 1px solid var(--gris-border);
+    border-radius: 12px; padding: 20px 22px; margin-bottom: 14px; box-shadow: var(--shadow); }
+  .card-blue { border-left: 4px solid var(--azul); }
+  .card-amber { border-left: 4px solid var(--ambar); }
+  .card-green { border-left: 4px solid var(--verde); }
+
+  h2 { font-size: 20px; font-weight: 600; color: var(--gris-text); margin-bottom: 6px; }
+  h3 { font-size: 15px; font-weight: 600; color: var(--gris-text); margin-bottom: 10px; }
+  p  { font-size: 14px; color: var(--gris-muted); line-height: 1.6; }
+  .sublabel { font-size: 11px; font-weight: 600; color: var(--gris-muted);
+    text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+
+  /* BADGES */
+  .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px;
+    border-radius: 20px; margin: 3px 4px 3px 0; }
+  .badge-blue  { background: var(--azul-light);  color: var(--azul-dark); }
+  .badge-green { background: var(--verde-light); color: var(--verde); }
+  .badge-amber { background: var(--ambar-light); color: var(--ambar); }
+
+  /* MEMORIA GRID */
+  .memoria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr));
+    gap: 10px; margin-top: 12px; }
+  .memoria-card { background: var(--gris-bg); border: 1px solid var(--gris-border);
+    border-radius: 10px; padding: 14px 10px; text-align: center; }
+  .memoria-pct { font-size: 26px; font-weight: 700; color: var(--azul); }
+  .memoria-sub { font-size: 11px; color: var(--gris-muted); margin-top: 4px; line-height: 1.4; }
+
+  /* STUDENT FORM */
+  .student-form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+  .form-group label { display: block; font-size: 12px; font-weight: 600;
+    color: var(--gris-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing:.05em; }
+  .form-group input, .form-group select {
+    width: 100%; padding: 9px 12px; border: 1px solid var(--gris-border-strong);
+    border-radius: var(--radius); font-size: 14px; color: var(--gris-text); background: #fff; }
+  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--azul); }
+  .form-full { grid-column: 1 / -1; }
+
+  /* SCENARIOS */
+  .scenario-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 12px; margin-bottom: 16px; }
+  .scenario-card { background: #fff; border: 1.5px solid var(--gris-border); border-radius: 12px;
+    padding: 16px; cursor: pointer; transition: border-color .2s, box-shadow .2s; }
+  .scenario-card:hover { border-color: var(--azul); box-shadow: 0 0 0 3px var(--azul-light); }
+  .scenario-card.selected { border-color: var(--azul); background: var(--azul-light); box-shadow: 0 0 0 3px var(--azul-light); }
+  .scenario-icon { font-size: 24px; margin-bottom: 8px; }
+  .scenario-title { font-size: 13px; font-weight: 600; color: var(--gris-text); margin-bottom: 4px; }
+  .scenario-desc { font-size: 12px; color: var(--gris-muted); line-height: 1.4; }
+
+  /* SIMULATOR */
+  .sim-input-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .sim-input-row label { font-size: 13px; font-weight: 600; color: var(--gris-muted); white-space: nowrap; }
+  .sim-input-row input { max-width: 200px; padding: 9px 12px; border: 1px solid var(--gris-border-strong);
+    border-radius: var(--radius); font-size: 15px; font-weight: 600; color: var(--gris-text); }
+  .calc-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  .calc-table tr { border-bottom: 1px solid var(--gris-border); }
+  .calc-table tr:last-child { border-bottom: none; }
+  .calc-table td { padding: 9px 4px; font-size: 14px; }
+  .calc-table td:last-child { text-align: right; font-weight: 600; }
+  .td-label { color: var(--gris-muted); }
+  .td-neutral { color: var(--azul); }
+  .td-deduct  { color: var(--rojo); }
+  .td-total   { color: var(--verde); font-size: 16px; }
+  .td-ir   { color: var(--verde-dark, #085041); background: var(--verde-light); padding: 2px 8px; border-radius: 4px; }
+  .td-iva  { color: var(--ambar); background: var(--ambar-light); padding: 2px 8px; border-radius: 4px; }
+
+  /* QUIZ */
+  .quiz-q { margin-bottom: 18px; }
+  .q-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .q-num { width: 28px; height: 28px; border-radius: 50%; background: var(--azul); color: #fff;
+    font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .q-num.done { background: var(--verde); }
+  .q-num.wrong { background: var(--rojo); }
+  .q-text { font-size: 15px; font-weight: 600; color: var(--gris-text); line-height: 1.5; }
+  .options { display: flex; flex-direction: column; gap: 8px; margin-left: 38px; }
+  .opt-btn { display: flex; align-items: flex-start; gap: 10px; width: 100%;
+    background: var(--gris-bg); border: 1px solid var(--gris-border); border-radius: var(--radius);
+    padding: 10px 14px; cursor: pointer; font-size: 13px; color: var(--gris-text); text-align: left;
+    transition: border-color .15s, background .15s; line-height: 1.5; }
+  .opt-btn:hover:not(:disabled) { border-color: var(--azul); background: var(--azul-light); }
+  .opt-btn.correct  { background: var(--verde-light); border-color: var(--verde-border); color: #085041; }
+  .opt-btn.wrong    { background: var(--rojo-light); border-color: var(--rojo-border); color: var(--rojo); }
+  .opt-btn.revealed { background: var(--verde-light); border-color: var(--verde-border); color: #085041; }
+  .opt-letter { font-weight: 700; min-width: 18px; }
+  .feedback { margin-left: 38px; margin-top: 8px; padding: 10px 14px; border-radius: var(--radius);
+    font-size: 13px; line-height: 1.5; display: none; }
+  .feedback.show { display: block; }
+  .feedback.ok   { background: var(--verde-light); border: 1px solid var(--verde-border); color: #085041; }
+  .feedback.fail { background: var(--rojo-light);  border: 1px solid var(--rojo-border);  color: var(--rojo); }
+
+  /* SCORE */
+  .score-box { text-align: center; padding: 28px 16px; }
+  .score-circle { width: 110px; height: 110px; border-radius: 50%; background: var(--verde-light);
+    border: 4px solid var(--verde); margin: 0 auto 16px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; }
+  .score-num { font-size: 38px; font-weight: 700; color: var(--verde); line-height: 1; }
+  .score-den { font-size: 16px; color: var(--verde); }
+  .score-msg { font-size: 16px; font-weight: 600; color: var(--gris-text); margin-bottom: 6px; }
+  .score-sub { font-size: 14px; color: var(--gris-muted); }
+
+  /* SUMMARY TABLE */
+  .sum-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .sum-table th { background: var(--azul-dark); color: #fff; padding: 9px 11px; text-align: left; }
+  .sum-table td { padding: 9px 11px; border-bottom: 1px solid var(--gris-border); }
+  .sum-table tr:nth-child(even) td { background: var(--gris-bg); }
+  .sum-table .hl td { background: var(--azul-light); font-weight: 600; color: var(--azul-dark); }
+  .sum-table tr:last-child td { border-bottom: none; }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 20px;
+    border: 1.5px solid var(--gris-border-strong); border-radius: var(--radius);
+    background: #fff; color: var(--gris-text); font-size: 14px; font-weight: 500; cursor: pointer;
+    transition: background .15s, border-color .15s; }
+  .btn:hover { background: var(--gris-bg); border-color: var(--azul); }
+  .btn-primary { background: var(--azul); color: #fff; border-color: var(--azul); }
+  .btn-primary:hover { background: var(--azul-dark); border-color: var(--azul-dark); }
+  .btn-green { background: var(--verde); color: #fff; border-color: var(--verde); }
+  .btn-green:hover { background: #085041; }
+  .btn-print { background: #4A1528; color: #fff; border-color: #4A1528; }
+  .btn-print:hover { background: #26215C; }
+  .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; flex-wrap: wrap; gap: 10px; }
+
+  /* NOTES AREA */
+  textarea.notes { width: 100%; min-height: 80px; padding: 10px 12px; border: 1px solid var(--gris-border-strong);
+    border-radius: var(--radius); font-size: 13px; font-family: inherit; color: var(--gris-text); resize: vertical; }
+
+  /* ===================== PRINT ===================== */
+  @media print {
+    body { background: #fff; font-size: 12px; }
+    .top-bar { background: #185FA5 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .no-print { display: none !important; }
+    .section { display: block !important; }
+    .print-only { display: block !important; }
+    .card { box-shadow: none; break-inside: avoid; }
+    .wrapper { padding: 12px; max-width: 100%; }
+    .progress-wrap { display: none; }
+    h2 { font-size: 16px; }
+    .sim-area { display: none; }
+    .scenario-grid { display: none; }
+    .options .opt-btn { border: 1px solid #ccc; }
+    .sum-table th { background: #185FA5 !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .sum-table .hl td { background: #E6F1FB !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @page { margin: 1.5cm; }
+  }
+  .print-only { display: none; }
+</style>
+</head>
+<body>
+
+<div class="top-bar no-print">
+  <h1>&#127480;&#127466; Retenciones Tributarias — Ecuador 2026</h1>
+  <span>Actividad interactiva de autoevaluación</span>
+</div>
+
+<!-- PRINT HEADER -->
+<div class="print-only" style="background:#185FA5;color:#fff;padding:14px 24px;margin-bottom:16px;">
+  <h1 style="font-size:17px;font-weight:600;color:#fff;">Informe de evaluación — Retenciones Tributarias Ecuador 2026</h1>
+</div>
+
+<div class="wrapper">
+  <!-- PROGRESS -->
+  <div class="progress-wrap no-print">
+    <div class="progress-step active" id="pb1"></div>
+    <div class="progress-step" id="pb2"></div>
+    <div class="progress-step" id="pb3"></div>
+    <div class="progress-step" id="pb4"></div>
+    <span class="progress-label" id="pb-label">Paso 1 de 4</span>
+  </div>
+
+  <!-- ======== SECCIÓN 1: DATOS DEL ESTUDIANTE + REPASO ======== -->
+  <div class="section active" id="s1">
+    <h2>Datos del estudiante</h2>
+    <p style="margin-bottom:18px;">Completa tu información antes de comenzar. Aparecerá en el informe impreso.</p>
+
+    <div class="card" style="margin-bottom:18px;">
+      <div class="student-form">
+        <div class="form-group">
+          <label for="inp-nombre">Nombre completo</label>
+          <input type="text" id="inp-nombre" placeholder="Ej. Ana Torres">
+        </div>
+        <div class="form-group">
+          <label for="inp-cedula">Cédula / ID</label>
+          <input type="text" id="inp-cedula" placeholder="1700000000">
+        </div>
+        <div class="form-group">
+          <label for="inp-curso">Curso / Nivel</label>
+          <input type="text" id="inp-curso" placeholder="Ej. Contabilidad III">
+        </div>
+        <div class="form-group">
+          <label for="inp-fecha">Fecha</label>
+          <input type="date" id="inp-fecha">
+        </div>
+        <div class="form-group form-full">
+          <label for="inp-docente">Docente</label>
+          <input type="text" id="inp-docente" placeholder="Nombre del docente">
+        </div>
+      </div>
+    </div>
+
+    <h2>Repaso rápido: fundamentos de retenciones</h2>
+    <p style="margin-bottom:16px;">Lee con atención antes de pasar al simulador y el quiz.</p>
+
+    <div class="card card-blue">
+      <div class="sublabel">Retención en la fuente — Impuesto a la Renta (IR)</div>
+      <p style="margin: 6px 0 10px;">El <strong>agente de retención</strong> (quien paga) descuenta un porcentaje de la <strong>base imponible (sin IVA)</strong> y lo entrega al SRI a cuenta del IR del beneficiario. El proveedor recibe menos dinero pero obtiene un <strong>crédito tributario</strong> que resta en su declaración anual.</p>
+      <span class="badge badge-blue">1.75 % — bienes muebles</span>
+      <span class="badge badge-blue">2 % — servicios (mano de obra)</span>
+      <span class="badge badge-blue">2.75 % — otros servicios</span>
+      <span class="badge badge-blue">8 % — sin título / arriendos PN</span>
+      <span class="badge badge-blue">10 % — profesionales con título</span>
+    </div>
+
+    <div class="card card-amber">
+      <div class="sublabel">Retención del IVA — se aplica sobre el VALOR DEL IVA</div>
+      <p style="margin:6px 0 12px;">A diferencia del IR, el porcentaje se toma sobre el IVA de la factura. Regla mnemotécnica:</p>
+      <div class="memoria-grid">
+        <div class="memoria-card">
+          <div class="memoria-pct">30 %</div>
+          <div class="memoria-sub">del IVA<br><strong>Compra de bienes</strong></div>
+        </div>
+        <div class="memoria-card">
+          <div class="memoria-pct">70 %</div>
+          <div class="memoria-sub">del IVA<br><strong>Servicios generales</strong></div>
+        </div>
+        <div class="memoria-card">
+          <div class="memoria-pct">100 %</div>
+          <div class="memoria-sub">del IVA<br><strong>Profesionales, arriendos, liquidaciones</strong></div>
+        </div>
+        <div class="memoria-card">
+          <div class="memoria-pct">10/20 %</div>
+          <div class="memoria-sub">del IVA<br><strong>Entre contribuyentes especiales</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="background:var(--gris-bg);">
+      <div class="sublabel">¿Quiénes son agentes de retención?</div>
+      <p style="margin-top:4px;">Sociedades &nbsp;·&nbsp; Personas naturales obligadas a llevar contabilidad &nbsp;·&nbsp; Contribuyentes especiales designados por el SRI &nbsp;·&nbsp; Empleadores (sobre remuneraciones en relación de dependencia)</p>
+    </div>
+
+    <div class="nav-row">
+      <span></span>
+      <button class="btn btn-primary" onclick="goTo(2)">Ir al simulador &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ======== SECCIÓN 2: SIMULADOR ======== -->
+  <div class="section" id="s2">
+    <h2>Simulador de retenciones</h2>
+    <p style="margin-bottom:18px;">Selecciona un escenario, ingresa el valor base y analiza el desglose completo.</p>
+
+    <div class="scenario-grid no-print">
+      <div class="scenario-card" onclick="selectScenario(0)" id="sc0">
+        <div class="scenario-icon">&#128203;</div>
+        <div class="scenario-title">Contador — honorarios</div>
+        <div class="scenario-desc">Persona natural con título factura a una sociedad</div>
+      </div>
+      <div class="scenario-card" onclick="selectScenario(1)" id="sc1">
+        <div class="scenario-icon">&#128666;</div>
+        <div class="scenario-title">Compra de mercadería</div>
+        <div class="scenario-desc">Sociedad compra bienes muebles a un proveedor</div>
+      </div>
+      <div class="scenario-card" onclick="selectScenario(2)" id="sc2">
+        <div class="scenario-icon">&#128295;</div>
+        <div class="scenario-title">Servicio de mantenimiento</div>
+        <div class="scenario-desc">Pago por servicio donde predomina la mano de obra</div>
+      </div>
+      <div class="scenario-card" onclick="selectScenario(3)" id="sc3">
+        <div class="scenario-icon">&#127968;</div>
+        <div class="scenario-title">Arriendo de local (PN)</div>
+        <div class="scenario-desc">Sociedad paga arriendo a persona natural</div>
+      </div>
+    </div>
+
+    <div class="card sim-area" id="sim-area" style="display:none;">
+      <h3 id="sim-title">—</h3>
+      <div id="sim-badges" style="margin-bottom:14px;"></div>
+
+      <div class="sim-input-row no-print">
+        <label for="sim-base">Valor base (USD, sin IVA):</label>
+        <input type="number" id="sim-base" value="1000" min="1" step="1" oninput="calcular()">
+      </div>
+
+      <table class="calc-table">
+        <tr><td class="td-label">Valor base (sin IVA)</td><td class="td-neutral" id="r-base">$1,000.00</td></tr>
+        <tr><td class="td-label">IVA 15 %</td><td class="td-neutral" id="r-iva">$150.00</td></tr>
+        <tr><td class="td-label"><strong>Total factura</strong></td><td class="td-neutral" id="r-total">$1,150.00</td></tr>
+        <tr><td class="td-label" id="lbl-ret-ir">Retención IR</td><td class="td-deduct" id="r-ret-ir">&minus;$100.00</td></tr>
+        <tr><td class="td-label" id="lbl-ret-iva">Retención IVA</td><td class="td-deduct" id="r-ret-iva">&minus;$150.00</td></tr>
+        <tr><td><strong>Valor neto que recibe el proveedor</strong></td><td class="td-total" id="r-neto">$900.00</td></tr>
+        <tr><td class="td-label">Crédito IR del proveedor</td><td><span class="td-ir" id="r-cred-ir">$100.00</span></td></tr>
+        <tr><td class="td-label">Crédito IVA del proveedor</td><td><span class="td-iva" id="r-cred-iva">$150.00</span></td></tr>
+      </table>
+
+      <div style="margin-top:16px;">
+        <div class="sublabel">Mis notas sobre este escenario</div>
+        <textarea class="notes" id="notes-sim" placeholder="Escribe aquí tus observaciones o preguntas sobre este caso..."></textarea>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="goTo(1)">&larr; Volver</button>
+      <button class="btn btn-primary" onclick="goTo(3)">Ir al quiz &rarr;</button>
+    </div>
+  </div>
+
+  <!-- ======== SECCIÓN 3: QUIZ ======== -->
+  <div class="section" id="s3">
+    <h2>Quiz de autoevaluación</h2>
+    <p style="margin-bottom:18px;">Responde las 6 preguntas. Recibirás retroalimentación inmediata en cada una.</p>
+    <div id="quiz-container"></div>
+
+    <div style="margin-top:20px;">
+      <div class="sublabel">Reflexión final (se incluye en el informe)</div>
+      <textarea class="notes" id="notes-reflexion" placeholder="¿Qué fue lo más difícil? ¿Qué necesito repasar? ¿Qué aprendí hoy?"></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="goTo(2)">&larr; Volver al simulador</button>
+      <button class="btn btn-green" onclick="verResultados()">Ver mi informe &#x2713;</button>
+    </div>
+  </div>
+
+  <!-- ======== SECCIÓN 4: INFORME FINAL ======== -->
+  <div class="section" id="s4">
+
+    <!-- Encabezado del informe -->
+    <div class="card" style="margin-bottom:18px; border-top: 4px solid var(--azul);">
+      <h2 style="margin-bottom:14px;">Informe de evaluación</h2>
+      <table style="width:100%;font-size:13px;border-collapse:collapse;">
+        <tr>
+          <td style="padding:5px 0;color:var(--gris-muted);width:130px;">Estudiante:</td>
+          <td style="padding:5px 0;font-weight:600;" id="rpt-nombre">—</td>
+          <td style="padding:5px 0;color:var(--gris-muted);width:100px;">Cédula:</td>
+          <td style="padding:5px 0;font-weight:600;" id="rpt-cedula">—</td>
+        </tr>
+        <tr>
+          <td style="padding:5px 0;color:var(--gris-muted);">Curso:</td>
+          <td style="padding:5px 0;font-weight:600;" id="rpt-curso">—</td>
+          <td style="padding:5px 0;color:var(--gris-muted);">Fecha:</td>
+          <td style="padding:5px 0;font-weight:600;" id="rpt-fecha">—</td>
+        </tr>
+        <tr>
+          <td style="padding:5px 0;color:var(--gris-muted);">Docente:</td>
+          <td style="padding:5px 0;font-weight:600;" colspan="3" id="rpt-docente">—</td>
+        </tr>
+        <tr>
+          <td style="padding:5px 0;color:var(--gris-muted);">Tema:</td>
+          <td style="padding:5px 0;font-weight:600;" colspan="3">Retenciones en la fuente — IR e IVA (Ecuador 2026)</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Puntaje -->
+    <div class="card" style="margin-bottom:18px;">
+      <div class="score-box">
+        <div class="score-circle">
+          <div class="score-num" id="score-num">0</div>
+          <div class="score-den">/ 6</div>
+        </div>
+        <div class="score-msg" id="score-msg"></div>
+        <div class="score-sub" id="score-sub"></div>
+      </div>
+    </div>
+
+    <!-- Detalle del quiz -->
+    <div class="card" style="margin-bottom:18px;">
+      <h3>Detalle por pregunta</h3>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:10px;">
+        <thead>
+          <tr style="background:var(--gris-bg);">
+            <th style="padding:8px;text-align:left;border-bottom:2px solid var(--gris-border);">#</th>
+            <th style="padding:8px;text-align:left;border-bottom:2px solid var(--gris-border);">Pregunta</th>
+            <th style="padding:8px;text-align:center;border-bottom:2px solid var(--gris-border);">Respuesta dada</th>
+            <th style="padding:8px;text-align:center;border-bottom:2px solid var(--gris-border);">Resultado</th>
+          </tr>
+        </thead>
+        <tbody id="rpt-quiz-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- Notas del simulador -->
+    <div class="card" style="margin-bottom:18px;" id="rpt-sim-block">
+      <h3>Notas del simulador</h3>
+      <p style="margin-top:6px;font-size:13px;white-space:pre-wrap;" id="rpt-sim-notes">—</p>
+    </div>
+
+    <!-- Reflexión -->
+    <div class="card" style="margin-bottom:18px;" id="rpt-ref-block">
+      <h3>Reflexión del estudiante</h3>
+      <p style="margin-top:6px;font-size:13px;white-space:pre-wrap;" id="rpt-ref-notes">—</p>
+    </div>
+
+    <!-- Espacio firma docente -->
+    <div class="card" style="margin-bottom:18px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;padding-top:8px;">
+        <div>
+          <div style="border-top:1px solid var(--gris-border-strong);margin-top:40px;padding-top:6px;font-size:12px;color:var(--gris-muted);">Firma del estudiante</div>
+        </div>
+        <div>
+          <div style="border-top:1px solid var(--gris-border-strong);margin-top:40px;padding-top:6px;font-size:12px;color:var(--gris-muted);">Firma / sello del docente &nbsp;&nbsp;&nbsp; Nota: _____ / 10</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de referencia -->
+    <div class="card" style="margin-bottom:18px;">
+      <h3>Tabla de referencia — porcentajes de retención</h3>
+      <table class="sum-table" style="margin-top:10px;">
+        <thead>
+          <tr><th>Tipo de pago / concepto</th><th>% Ret. IR (sobre base)</th><th>% Ret. IVA (sobre el IVA)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Compra de bienes muebles</td><td>1.75 %</td><td>30 %</td></tr>
+          <tr><td>Servicios donde predomina mano de obra</td><td>2 %</td><td>70 %</td></tr>
+          <tr><td>Otros pagos / servicios sin porcentaje específico</td><td>2.75 %</td><td>70 %</td></tr>
+          <tr><td>Prof. sin título / arriendos PN / notarios / regalías</td><td>8 %</td><td>100 %</td></tr>
+          <tr class="hl"><td>Servicios profesionales con título (predomina intelecto)</td><td>10 %</td><td>100 %</td></tr>
+          <tr><td>Entre contribuyentes especiales — bienes</td><td>1.75 %</td><td>10 %</td></tr>
+          <tr><td>Entre contribuyentes especiales — servicios</td><td>2 %</td><td>20 %</td></tr>
+          <tr><td>Rendimientos financieros</td><td>2 %</td><td>—</td></tr>
+          <tr><td>Pagos al exterior</td><td>Según convenio</td><td>—</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:11px;color:var(--gris-muted);margin-top:10px;">&#9888; Verifique siempre contra la Resolución del SRI vigente (NAC-DGERCGC) para el ejercicio fiscal correspondiente.</p>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="reiniciarQuiz()" class="no-print">&#8635; Repetir quiz</button>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-print no-print" onclick="imprimirInforme()">&#128438; Imprimir informe</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end wrapper -->
+
+<script>
+// ===== DATA =====
+const scenarios = [
+  { title: "Contador — honorarios profesionales", irPct: 10, ivaPct: 100,
+    badges: [["badge-blue","IR 10 % — profesional con título"],["badge-amber","IVA 100 % — servicios profesionales"]] },
+  { title: "Compra de mercadería (bienes muebles)", irPct: 1.75, ivaPct: 30,
+    badges: [["badge-blue","IR 1.75 % — bienes muebles"],["badge-green","IVA 30 % — compra de bienes"]] },
+  { title: "Servicio de mantenimiento (mano de obra)", irPct: 2, ivaPct: 70,
+    badges: [["badge-blue","IR 2 % — servicios mano de obra"],["badge-amber","IVA 70 % — servicios generales"]] },
+  { title: "Arriendo de local — persona natural", irPct: 8, ivaPct: 100,
+    badges: [["badge-blue","IR 8 % — arriendo PN"],["badge-amber","IVA 100 % — arriendo PN"]] }
+];
+
+const questions = [
+  { q: "Una sociedad paga USD 2.000 por servicios de plomería (predomina mano de obra). ¿Cuánto retiene de IVA?",
+    opts: ["USD 30 (30 % del IVA de USD 100)","USD 210 (70 % del IVA de USD 300)","USD 300 (100 % del IVA)","No hay retención de IVA en servicios"],
+    correct: 1, exp: "El IVA = USD 2.000 × 15 % = USD 300. En servicios con mano de obra la retención de IVA es 70 %: USD 300 × 70 % = USD 210." },
+  { q: "Un abogado (persona natural con título) factura USD 500 + IVA a una empresa. ¿Cuál es la retención de IR?",
+    opts: ["USD 10 (2 %)","USD 8.75 (1.75 %)","USD 50 (10 %)","USD 40 (8 %)"],
+    correct: 2, exp: "Los servicios profesionales con título aplican 10 % de IR sobre la base: USD 500 × 10 % = USD 50." },
+  { q: "¿Cuál es la diferencia principal entre la retención de IR y la retención de IVA?",
+    opts: ["La retención de IR se aplica sobre el valor del IVA; la de IVA sobre la base","La retención de IR va sobre la base (sin IVA); la de IVA va sobre el valor del IVA","Ambas se aplican sobre el total de la factura","Solo las sociedades hacen retención de IVA"],
+    correct: 1, exp: "Correcto. Retención IR = % × base imponible (sin IVA). Retención IVA = % × valor del IVA de la factura." },
+  { q: "Una sociedad compra mercadería por USD 1.000 + IVA (USD 150). ¿Cuánto retiene de IVA?",
+    opts: ["USD 150 (100 %)","USD 105 (70 %)","USD 45 (30 %)","USD 17.50 (1.75 % de la base)"],
+    correct: 2, exp: "En compra de bienes muebles la retención de IVA es 30 % del IVA: USD 150 × 30 % = USD 45." },
+  { q: "¿Para qué sirven las retenciones en la fuente al proveedor que las recibe?",
+    opts: ["Son una penalización por no declarar a tiempo","Son crédito tributario que descuenta del impuesto en su declaración","Son ingresos adicionales que no declara","Las paga directamente al SRI como impuesto definitivo sin declaración"],
+    correct: 1, exp: "Las retenciones son anticipos del IR (y del IVA). Al declarar, el proveedor las descuenta del impuesto causado. Si superan el impuesto, genera saldo a favor." },
+  { q: "Una empresa (contribuyente especial) paga a otra empresa (también especial) un servicio de consultoría por USD 800 + IVA. ¿Qué porcentaje de IVA retiene?",
+    opts: ["70 % del IVA (régimen general de servicios)","100 % del IVA (servicios profesionales)","20 % del IVA (entre contribuyentes especiales — servicios)","30 % del IVA (compra de bienes)"],
+    correct: 2, exp: "En transacciones entre contribuyentes especiales, la retención de IVA en servicios es 20 % del IVA (no el 70 % general). En bienes sería 10 %." }
+];
+
+let answers  = new Array(questions.length).fill(null);
+let answered = new Array(questions.length).fill(false);
+let currentScenario = null;
+
+// ===== INIT =====
+document.getElementById('inp-fecha').valueAsDate = new Date();
+
+// ===== NAVIGATION =====
+function goTo(n) {
+  document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i+1 === n));
+  ['pb1','pb2','pb3','pb4'].forEach((id,i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('done','active');
+    if (i+1 < n) el.classList.add('done');
+    else if (i+1 === n) el.classList.add('active');
+  });
+  document.getElementById('pb-label').textContent = 'Paso ' + n + ' de 4';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===== SIMULATOR =====
+function selectScenario(idx) {
+  document.querySelectorAll('.scenario-card').forEach((c,i) => c.classList.toggle('selected', i===idx));
+  currentScenario = idx;
+  const sc = scenarios[idx];
+  document.getElementById('sim-area').style.display = 'block';
+  document.getElementById('sim-title').textContent = sc.title;
+  const bd = document.getElementById('sim-badges');
+  bd.innerHTML = sc.badges.map(([cls,txt]) => `<span class="badge ${cls}">${txt}</span>`).join('');
+  document.getElementById('lbl-ret-ir').textContent  = `Retención IR (${sc.irPct} % sobre base)`;
+  document.getElementById('lbl-ret-iva').textContent = `Retención IVA (${sc.ivaPct} % del IVA)`;
+  calcular();
+}
+
+function calcular() {
+  if (currentScenario === null) return;
+  const base  = parseFloat(document.getElementById('sim-base').value) || 0;
+  const sc    = scenarios[currentScenario];
+  const iva   = base * 0.15;
+  const total = base + iva;
+  const retIR  = base * (sc.irPct  / 100);
+  const retIVA = iva  * (sc.ivaPct / 100);
+  const neto   = total - retIR - retIVA;
+  const fmt = v => '$' + v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  document.getElementById('r-base').textContent    = fmt(base);
+  document.getElementById('r-iva').textContent     = fmt(iva);
+  document.getElementById('r-total').textContent   = fmt(total);
+  document.getElementById('r-ret-ir').textContent  = '\u2212' + fmt(retIR);
+  document.getElementById('r-ret-iva').textContent = '\u2212' + fmt(retIVA);
+  document.getElementById('r-neto').textContent    = fmt(neto);
+  document.getElementById('r-cred-ir').textContent  = fmt(retIR);
+  document.getElementById('r-cred-iva').textContent = fmt(retIVA);
+}
+
+// ===== QUIZ =====
+function buildQuiz() {
+  const c = document.getElementById('quiz-container');
+  c.innerHTML = '';
+  questions.forEach((q, qi) => {
+    const isAns  = answered[qi];
+    const isOk   = isAns && answers[qi] === q.correct;
+    const div = document.createElement('div');
+    div.className = 'quiz-q card';
+    div.innerHTML = `
+      <div class="q-header">
+        <div class="q-num ${isOk?'done':isAns?'wrong':''}" id="qnum${qi}">${qi+1}</div>
+        <div class="q-text">${q.q}</div>
+      </div>
+      <div class="options">
+        ${q.opts.map((o,oi) => {
+          let cls = '';
+          if (isAns) {
+            if (oi === q.correct) cls = 'revealed';
+            else if (oi === answers[qi] && oi !== q.correct) cls = 'wrong';
+          }
+          return `<button class="opt-btn ${cls}" onclick="responder(${qi},${oi})" ${isAns?'disabled':''}><span class="opt-letter">${['A','B','C','D'][oi]}.</span><span>${o}</span></button>`;
+        }).join('')}
+      </div>
+      <div class="feedback ${isAns?(isOk?'ok show':'fail show'):''}" id="fb${qi}">
+        ${isAns?(isOk?'&#10003; Correcto. ':'&#10007; Incorrecto. ')+q.exp:''}
+      </div>`;
+    c.appendChild(div);
+  });
+}
+
+function responder(qi, oi) {
+  if (answered[qi]) return;
+  answers[qi] = oi;
+  answered[qi] = true;
+  const q = questions[qi];
+  const isOk = oi === q.correct;
+  document.querySelectorAll(`#quiz-container .quiz-q:nth-child(${qi+1}) .opt-btn`).forEach((btn,i) => {
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add('revealed');
+    else if (i === oi && !isOk) btn.classList.add('wrong');
+  });
+  const fb = document.getElementById('fb'+qi);
+  fb.className = 'feedback show ' + (isOk ? 'ok' : 'fail');
+  fb.innerHTML = (isOk ? '&#10003; Correcto. ' : '&#10007; Incorrecto. ') + q.exp;
+  const qnum = document.getElementById('qnum'+qi);
+  qnum.classList.remove('done','wrong');
+  qnum.classList.add(isOk ? 'done' : 'wrong');
+}
+
+// ===== RESULTS =====
+function verResultados() {
+  const score = answers.filter((a,i) => a !== null && a === questions[i].correct).length;
+
+  // Student data
+  document.getElementById('rpt-nombre').textContent  = document.getElementById('inp-nombre').value || '—';
+  document.getElementById('rpt-cedula').textContent  = document.getElementById('inp-cedula').value || '—';
+  document.getElementById('rpt-curso').textContent   = document.getElementById('inp-curso').value  || '—';
+  document.getElementById('rpt-docente').textContent = document.getElementById('inp-docente').value || '—';
+  const fd = document.getElementById('inp-fecha').value;
+  document.getElementById('rpt-fecha').textContent = fd ? new Date(fd+'T12:00:00').toLocaleDateString('es-EC',{day:'2-digit',month:'long',year:'numeric'}) : '—';
+
+  // Score
+  document.getElementById('score-num').textContent = score;
+  const msgs = [
+    ['Necesita refuerzo','Repasa la guía didáctica y vuelve a intentarlo.'],
+    ['En proceso','Revisa los casos donde fallaste y repite el quiz.'],
+    ['En proceso','Buen inicio — repasa las explicaciones de los errores.'],
+    ['Aceptable','Ya dominas los conceptos básicos. Sigue practicando.'],
+    ['Bueno','Sólido conocimiento. Revisa los detalles que fallaron.'],
+    ['Muy bueno','Casi perfecto. Excelente dominio del tema.'],
+    ['Excelente &#127942;','¡Dominas completamente el tema de retenciones!']
+  ];
+  const m = msgs[Math.min(score, 6)];
+  document.getElementById('score-msg').innerHTML = m[0];
+  document.getElementById('score-sub').textContent = m[1];
+
+  // Quiz detail table
+  const tbody = document.getElementById('rpt-quiz-tbody');
+  tbody.innerHTML = '';
+  questions.forEach((q, qi) => {
+    const ans = answers[qi];
+    const isOk = ans !== null && ans === q.correct;
+    const notAns = ans === null;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="padding:8px;text-align:center;font-weight:700;">${qi+1}</td>
+      <td style="padding:8px;font-size:12px;">${q.q}</td>
+      <td style="padding:8px;text-align:center;font-size:12px;">${notAns ? '—' : ['A','B','C','D'][ans] + '. ' + q.opts[ans]}</td>
+      <td style="padding:8px;text-align:center;">
+        <span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;
+          background:${notAns?'#eee':isOk?'#E1F5EE':'#FCEBEB'};
+          color:${notAns?'#888':isOk?'#085041':'#A32D2D'};">
+          ${notAns ? 'Sin respuesta' : isOk ? '&#10003; Correcto' : '&#10007; Incorrecto'}
+        </span>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+
+  // Notes
+  const sn = document.getElementById('notes-sim').value.trim();
+  document.getElementById('rpt-sim-notes').textContent = sn || '(sin notas)';
+  const rn = document.getElementById('notes-reflexion').value.trim();
+  document.getElementById('rpt-ref-notes').textContent = rn || '(sin reflexión)';
+
+  goTo(4);
+}
+
+function reiniciarQuiz() {
+  answers  = new Array(questions.length).fill(null);
+  answered = new Array(questions.length).fill(false);
+  buildQuiz();
+  document.getElementById('notes-reflexion').value = '';
+  goTo(3);
+}
+
+function imprimirInforme() {
+  window.print();
+}
+
+// ===== BOOTSTRAP =====
+buildQuiz();
+</script>
+</body>
+</html>
